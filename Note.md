@@ -128,3 +128,99 @@ visitedCity[currentCity] = false;
 发现问题所在。。。题目问的是 the number of different shortest paths between *C*1 and *C*2，即最短路径的数量，而我下意识认为题目所求的是最短路径的长度。。。。注意审题注意审题！！！！！！
 
 并且在无负权边的情况下，Dijkstra是比DFS更优的解法。后续遇到相关问题时应用Dijkstra算法重写该题。
+
+#### 1004
+
+###### first attempt
+
+尝试自己写一个树的数据结构
+
+自定义类内部的所有内部变量需要在public方法中初始化:
+
+````java
+this.children=new ArrayList<>();
+````
+
+Scanner读取一行中空格分隔的String方法：
+
+````java
+String[] parts = line.split(" ");
+````
+
+String转int:
+
+````java
+int numChildren = Integer.parseInt(parts[1]);
+````
+
+使用scanner.nextLine()时特别注意换行符要额外读取
+
+````java
+int nonLeafNode = scanner.nextInt();
+scanner.nextLine(); // 这行将消耗掉整数后的换行符
+````
+
+通过两个测试
+
+重新读题，确认题目要求，通过三个测试用例
+
+关于自增：
+
+````java
+count[i]++;
+sum++;
+````
+
+正确写法如上；在 Java 中，`x++` 是先返回 `x` 的当前值，然后 `x` 的值增加1
+
+###### second attempt
+
+两个关键点：
+
+1.使用HashMap数据结构，在创建树时，先考虑增加的节点是否已经存在，这样可以保证孙子节点的正确添加
+
+````java
+Node node= tree.getOrDefault(id, new Node(id));
+````
+
+使用getOrDefault来实现上述功能
+
+2.使用BFS，来确保输出的是每一个layer的叶子节点
+
+````java
+while(!queue.isEmpty()) {
+	int size = queue.size();
+    int count=0;
+    for(int i =0; i<size;i++) {
+        Node current = queue.poll();
+        if(current.children.isEmpty()) {
+            count++;
+        }else {
+            queue.addAll(current.children);
+        }
+    }
+    counts.add(count);
+}
+````
+
+使用两个循环，用LinkedList创建队列
+
+通过四个测试，还有两个测试存在错误：分别为测试点2于测试点4
+
+经过多次实验，确定测试点2的输入为1，0 即总点数为1的情况，原程序中会导致HashMap空指针出错。
+
+经过对Exception的catch，确定测试点4在于分割符号为连续空格的情况，源程序中
+
+````java
+String[] parts = line.split(" ");
+````
+
+的方法会产生错误，处理方法为
+
+````java
+String[] parts = line.split("\\s");
+````
+
+使用正则表达式来匹配一个或者多个空格。
+
+最终通过测试。
