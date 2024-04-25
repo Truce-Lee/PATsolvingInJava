@@ -218,9 +218,66 @@ String[] parts = line.split(" ");
 的方法会产生错误，处理方法为
 
 ````java
-String[] parts = line.split("\\s");
+String[] parts = line.split("\\s+");
 ````
 
 使用正则表达式来匹配一个或者多个空格。
 
 最终通过测试。
+#### 1005
+
+题目简单，一遍过。
+
+写法比较丑陋
+
+char转int的方法：
+
+````java
+int index =Character.getNumericValue(string.charAt(i));
+````
+
+#### 1006
+###### first attempt
+
+题目无难度
+
+关注Eclipse使用debug时如何查看变量值
+#### 1007
+
+经典的动态规划题
+
+注意审题，输出的是起始和终止的数字；并且在全负数的情况下的特殊输出要求
+
+###### first attempt
+
+测试点5未通过，7超时
+
+Eclipse ctrl+1快速修复
+###### second attempt
+
+对于测试点7超时，考虑用BufferedReaderInputStreamReader来代替Scanner
+
+````java
+BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+````
+
+````java
+String[] inputs = br.readLine().trim().split(" ");
+seq[i] = Integer.parseInt(inputs[i]);
+````
+
+并且，将全局最大值max定义为Integer.MIN_VALUE后，通过测试
+
+例如对于测试用例
+
+````java
+4
+-1 -2 -3 -4
+````
+
+正确的输出是0 -1 -4，但若未初始化max未负数，则其无法对首位两个数的索引赋值，从而报错。
+#### 1008
+
+无难度
+
+注意imput的格式
