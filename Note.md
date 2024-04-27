@@ -280,4 +280,146 @@ seq[i] = Integer.parseInt(inputs[i]);
 
 无难度
 
-注意imput的格式
+注意input的格式
+#### 1009
+
+与1002类似，可以根据经验判断使用TreeMap结构存储多项式是合理的
+
+问题在于对TreeMap的各类方法仍不熟悉，最重要的在一下这三种：
+
+````java
+TreeMap<Integer,Double> poly1 = new TreeMap<>((a,b)->b-a);
+````
+
+初始化，`（b-a）`意味着降序
+
+````java
+multiple.merge(exp1+exp2, poly1.get(exp2)*poly2.get(exp1),Double::sum);
+````
+
+merge函数的使用，常常意味着多项式的加法。重点在于`Double::sum`的写法
+
+````java
+multiple.values().removeIf(v->Math.abs(v)<1e-10);
+````
+
+以及`removeIf`方法在.value方法下`(v->Math.abs(v)<1e-10)`，此方法接受一个谓词
+
+注意科学计数法小数的表示
+
+并且需要记住lamda表达式`->`的写法和作用：左参数，右执行体，用以表示匿名函数，
+
+`v`即为`multiple.values()`集合中的每一个值,由`removeIf`方法定义
+
+除此以外`String.format("%,.1f", poly1.get(exp)));`格式化输出的方法仍需注意
+
+需了解知识：lamda表达式， `Collection` 接口，`Comparator`比较器
+#### 1010
+###### first attempt
+
+暴力穷举，测试点0 7 10 19未通过
+
+注意Java的乘法算法即使是整数型也用Math.pow
+
+###### second attempt
+
+将int改为long,并且使用二分法计算
+
+radix的最小值为各个位数中值的最大值＋1；radix的最大值为需比较的十进制数的值＋1；
+
+特别注意最小值的设定不能出错，否则当出现N1==N2时（测试点0）可能会出现错误
+#### 1011
+
+题目很简答，但是一开始一个测试都没通过。。。
+
+问题在于对于一些计算时变量的初始化没有在循环内部。低级错误务必小心。
+
+#### 1012
+
+###### first attempt
+
+用重写Comparator方法，多次排序后得到结果；
+
+````java
+Collections.sort(gradeList,new Comparator<Grade>(){
+			@Override
+			public int compare(Grade o1, Grade o2) {
+				return Integer.compare(o2.get(s), o1.get(s));
+			}
+		});
+````
+
+只通过测试点0，测试点1 2 答案错误，测试点3 4 运行超时
+
+###### second attempt
+
+试图使用BufferReader提高速度
+
+同时使用HashMap用以通过id定位学生信息，避免多次寻找，提高了运行效率
+
+同时在Grade类内新增bestRank方法来解决相同分数下排序问题
+
+成功通过测试点1、2，但测试点3、4仍然超时。
+
+没有办法在结构上提高效率，只能改变算法
+
+###### third attempt
+
+参考了[PAT/AdvancedLevel_Java/1012 The Best Rank (25).java at master · liuchuo/PAT (github.com)](https://github.com/liuchuo/PAT/blob/master/AdvancedLevel_Java/1012 The Best Rank (25).java)中的想法；利用桶排序的类似方法避免多次排序，空间换时间。
+
+根据此想法重构代码。
+
+但测试点3、4仍然超时。
+
+重点在于对数据结构的选择。
+
+老老实实复现代码
+
+未使用Stream流读入，测试点3会超时。
+
+未将BufferedReader设置为全局变量，测试点4会超时
+
+非常极限地通过测试用例
+
+对枚举类的使用：
+
+````java
+enum Name{
+    C(2),M(3),E(4),A(1);
+    final int rank;
+    Name(int rank){
+        this.rank = rank;
+    }
+}
+
+Name.values()//返回枚举类的所有值
+````
+
+HashMap初始化时有初始容量和负载因子：
+````java
+HashMap<String, Student> students = new HashMap<>(1024, 1);
+````
+
+Stream的使用
+
+````java
+Course course = Stream.of(student.courses).min((o1,o2)->{
+					int rank1 = rankTable[o1.index][o1.score];
+					int rank2 = rankTable[o2.index][o2.score];
+					int compare = rank1-rank2;
+					return compare==0 ? o1.priority-o2.priority:compare;
+				}).get();
+````
+
+````java
+Stream.of() //非Collection接口使用该方法返回流
+````
+
+````java
+.min() //通过比较器返回较小的值，注意返回的是Optional<T>对象，需要用.get方法取出
+````
+
+这里的比较器是个lamda表达式
+
+
+
