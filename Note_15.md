@@ -40,3 +40,73 @@ String.format("%s %02d", name,month)
 System.out.printf("%d%s",list.get(i), i==0? "\n" :" ");
 ````
 
+#### 1020
+
+二叉树前序排序(preorder)、中序排序(inorder)、后序排序(postorder)、层序排序(level order)的定义
+
+算法核心思想在于，根据节点在后序排序的位置确定根节点，在中序排序的位置确定子树，递归遍历此操作。
+
+###### first attempt
+
+用数组存储二叉树，勉强实现功能，通过测试点0；
+
+###### second attempt
+
+一、常见的二叉树数据结构构造方法：
+
+1. 定义Node类：
+
+````java
+static class Node{
+    int value;
+    Node left;
+    Node right;
+    public Node(int value){
+        this.value = value
+    }
+}
+````
+
+2. 递归,建立树:
+
+````java
+private static Node buildTree(postOrder;inMap;startPos;endPos;startIn;endIn){
+	if(startPos>endPos || startIn>endIn){
+        return null
+    }
+    root = posOrder[endPos];
+    rootIn = inMap.get(root);
+    leftTree = rootIn - startIn;
+    rightTree = endIn - rootIn;
+    root.left= buildTree(postOrder,inMap,startPos,startPos+leftTree-1,startIn,rootIn-1);
+    root.right=buildTree(postOrder,inMap,endPos-rightTree,endPos-1,rootIn+1,endIn);
+    return root;
+}
+````
+
+二、广度优先搜索：
+
+````java
+Queue<Node> queue = new LinkedList<>();
+if(root!=null) queue.offer(root);
+While(!queue.isEmpty()){
+    Node node = queue.poll();
+    order.add(Node);
+    if(node.left!=null) queue.offer(node.left);
+    if(node.right!=null) queue.offer(node.right);
+}
+````
+
+注意点：
+
+Java内部队列是一个接口，常常使用LinkedList<>实现队列；其对内部元素删除添加的操作为O(1)
+
+````java
+Queue<Node> queue = new LinkedList<>();
+````
+
+add/offer,poll/peak的区别：
+
+​	add在添加元素时若超出内存为扔出异常；offer返回false;
+
+​	poll取出queue中的元素（FIFO）,peak返回元素后不改变queue的状态
